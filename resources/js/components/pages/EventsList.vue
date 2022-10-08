@@ -29,10 +29,14 @@
                         </b-form-group>
                     </b-col>
                 </b-row>
-                <b-table :items="events" :fields="fields" :current-page="currentPage" :per-page="perPage"
-                    :filter="filter"
-                    stacked="md" show-empty small>
+                <b-table :items="events" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" stacked="md" show-empty small :busy="isLoading">
 
+                    <template #table-busy>
+                        <div class="text-center theme-font-color-1 my-1">
+                            <b-spinner class="align-middle" small></b-spinner>
+                            <strong>Loading...</strong>
+                        </div>
+                    </template>
                     <template #cell(name)="event">
                         <strong role="button" @click="$router.push(`/events/${event.item.id}`)">{{ event.item.name}}</strong>
                     </template>
@@ -64,6 +68,7 @@ import DeleteEvent from '../modals/DeleteEvent';
 export default {
     data() {
         return {
+            isLoading: true,
             events: [],
             eventInfo: {},
             totalRows: 1,
@@ -88,20 +93,25 @@ export default {
     methods: {
         getAllEvents() {
             var self = this
-            axios
-                .get("/api/v1/events?paginate=1", {
-                    headers: {
-                        'accept': 'application/json'
-                    }
-                })
-                .then((response) => {
-                    this.events = response.data
-                    this.totalRows = this.events.length
-                })
-                .catch(function (error) {
-                    console.error(error);
-                    self.loading = false
-                });
+
+            axios.get("/sanctum/csrf-cookie").then((response) => {
+                axios
+                    .get("/api/v1/events?paginate=1", {
+                        headers: {
+                            'accept': 'application/json'
+                        }
+                    })
+                    .then((response) => {
+                        this.isLoading = false
+                        this.events = response.data
+                        this.totalRows = this.events.length
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                        self.isLoading = false
+                        self.loading = false
+                    });
+            });
         },
         showToast(
             title = "",

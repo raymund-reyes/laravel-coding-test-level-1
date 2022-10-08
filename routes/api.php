@@ -3,13 +3,15 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\EventsController;
+use App\Http\Controllers\API\CoindeskController;
+use App\Http\Controllers\UserController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 
-Route::group(['prefix' => 'v1'], function() {
+Route::group(['prefix' => 'v1', 'middleware' => []], function() {
 
     /**
      * @param params
@@ -39,4 +41,12 @@ Route::group(['prefix' => 'v1'], function() {
      * DELETE EVENT
      */
     Route::delete('/events/{id}', [EventsController::class, 'delete']);
+
+    /**
+     * EXTERNAL API
+     */
+    Route::get('/external-api/coindesk', [CoindeskController::class, 'index']);
 });
+
+Route::post('login', [UserController::class, 'login']);
+Route::post('logout', [UserController::class, 'logout'])->middleware('auth:sanctum');

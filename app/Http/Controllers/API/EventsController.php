@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Log;
 use Illuminate\Support\Facades\Validator;
+use App\Services\MailSender;
+use Illuminate\Support\Facades\Redis;
 
 class EventsController extends Controller
 {
@@ -19,14 +21,25 @@ class EventsController extends Controller
      */
     public function index($params = NULL)
     {
-        if ($params == 'active-events')
-            $data = Event::active()->get();
-        else if ($params != NULL)
-            $data = Event::where('id', $params)->get();
-        else
-            $data = Event::all();
+        $data = NULL;
+        if ( $params && $params != 'active-events' ) {
+            $eventCache = Redis::get($params);
+            if ( $eventCache ) {
+                $data = [json_decode($eventCache, true)];
+            }
+        }
+        if (!$data) {
+            if ($params == 'active-events')
+                $data = Event::active()->get();
+            else if ($params != NULL)
+                $data = Event::where('id', $params)->get();
+            else
+                $data = Event::all();
 
-        return response()->json($data->toArray());
+            $data = $data->toArray();
+        }
+
+        return response()->json($data);
 
     }
 
@@ -61,13 +74,21 @@ class EventsController extends Controller
         }
         try {
             DB::beginTransaction();
-            Event::create([
+            $eventArr = [
                 'id' => Str::orderedUuid(),
                 'name' => $request->name,
                 'slug' => $request->slug,
                 'startAt' => $request->start,
                 'endAt' => $request->end,
-            ]);
+            ];
+            $newEvent = Event::create($eventArr);
+
+            MailSender::send('Event Created', "Event id {$newEvent->id} has been created", auth()->user()->email);
+
+            $eventArr['id'] = $newEvent->id;
+
+            Redis::set($newEvent->id, json_encode($eventArr));
+
             DB::commit();
         } catch (\Exception $e) {
             Log::error("[Create Event] Error creating: {$e->getMessage()}", $request->all());
@@ -126,12 +147,19 @@ class EventsController extends Controller
 
         try {
             DB::beginTransaction();
-            $event->update([
+            $eventArr = [
                 'name' => $request->name,
                 'slug' => $request->slug,
                 'startAt' => $request->start,
                 'endAt' => $request->end,
-            ]);
+            ];
+            $event->update($eventArr);
+
+            $eventArr['id'] = $id;
+            Redis::del($id);
+
+            Redis::set($id, json_encode($eventArr));
+
             DB::commit();
         } catch (\Exception $e) {
             Log::error("[Update Event] Error updating: {$e->getMessage()}", $request->all());
@@ -206,6 +234,9 @@ class EventsController extends Controller
         try {
             DB::beginTransaction();
             $event->update($eventData);
+
+            Redis::del($id);
+            Redis::set($id, json_encode($event->first()->toArray()));
             DB::commit();
         } catch (\Exception $e) {
             Log::error("[Update Event] Error updating: {$e->getMessage()}", $request->all());
@@ -235,6 +266,7 @@ class EventsController extends Controller
         }
 
         $event->delete();
+        Redis::del($id);
 
         return response()->json(['message' => "Event id {$id} has been deleted"]);
     }

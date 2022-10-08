@@ -2,6 +2,8 @@ import Router from "vue-router";
 import EventsList from '../components/pages/EventsList';
 import EventEdit from '../components/pages/EventEdit';
 import EventCreate from '../components/pages/EventCreate';
+import Login from '../components/pages/Login';
+import ExternalAPI from '../components/pages/ExternalAPI';
 export const routes = [
     {
         name: 'home',
@@ -19,6 +21,18 @@ export const routes = [
         name: 'edit-event',
         path: '/events/:id/:edit?',
         component: EventEdit
+    },
+
+    {
+        name: 'login',
+        path: '/',
+        component: Login
+    },
+
+    {
+        name: 'external-api',
+        path: '/external-api',
+        component: ExternalAPI
     }
 ];
 

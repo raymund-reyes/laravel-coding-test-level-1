@@ -42,7 +42,7 @@ export default {
             startAt: '',
             endAt: '',
             id: '',
-            edit: this.$route.params.edit == 'edit' ? true : false
+            edit: this.$route.params.edit == 'edit' ? true: false
         }
     },
 
@@ -87,46 +87,46 @@ export default {
 
             let self = this
             axios
-                .put(`/api/v1/events/${this.id}`,
-                    {
-                        name: this.eventName,
-                        slug: this.eventSlug,
-                        start: this.startAt,
-                        end: this.endAt
-                    },
-                    {
-                        headers: {
-                            'accept': 'application/json'
+                    .put(`/api/v1/events/${this.id}`,
+                        {
+                            name:this.eventName,
+                            slug: this.eventSlug,
+                            start: this.startAt,
+                            end: this.endAt
+                        },
+                        {
+                            headers: {
+                                'accept': 'application/json'
+                            }
+                        })
+                    .then((response) => {
+                        if (response.data) {
+                            this.showToast(
+                                "Event Updated",
+                                response.data.message,
+                                "success"
+                            );
+                            setTimeout(() => {
+                                self.$router.push('/events')
+                            }, 3000)
+                        } else {
+                            this.error = response.data;
+                            this.showToast(
+                                "Event Update Failed",
+                                this.error,
+                                "danger"
+                            );
                         }
+
                     })
-                .then((response) => {
-                    if (response.data) {
-                        this.showToast(
-                            "Event Updated",
-                            response.data.message,
-                            "success"
-                        );
-                        setTimeout(() => {
-                            self.$router.push('/events')
-                        }, 3000)
-                    } else {
-                        this.error = response.data;
-                        this.showToast(
+                    .catch(function (error) {
+                        console.error(error);
+                         self.showToast(
                             "Event Update Failed",
-                            this.error,
+                            "Event Update Error. Please try again",
                             "danger"
                         );
-                    }
-
-                })
-                .catch(function (error) {
-                    console.error(error);
-                    self.showToast(
-                        "Event Update Failed",
-                        "Event Update Error. Please try again",
-                        "danger"
-                    );
-                });
+                    });
         },
         showToast(
             title = "",
