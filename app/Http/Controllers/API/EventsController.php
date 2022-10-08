@@ -30,6 +30,15 @@ class EventsController extends Controller
 
     }
 
+    /**
+     * CREATE NEW EVENT
+     * @param $params;
+     *      name = event name
+     *      slug
+     *      start = event start datetime
+     *      end = event end datetime
+     * @return json
+     */
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -72,6 +81,16 @@ class EventsController extends Controller
         return response()->json(['message' => "Event {$request->name} has been created"]);
     }
 
+     /**
+     * UPDATE EVENT
+     * @param $params;
+     *      name = event name
+     *      slug
+     *      start = event start datetime
+     *      end = event end datetime
+     *      id
+     * @return json
+     */
     public function update(Request $request, $id = NULL)
     {
 
@@ -126,6 +145,16 @@ class EventsController extends Controller
         return response()->json(['message' => "Event {$request->name} has been updated"]);
     }
 
+    /**
+     * PARTIALLY UPDATE EVENT
+     * @param $params;
+     *      name = event name
+     *      slug
+     *      start = event start datetime
+     *      end = event end datetime
+     *      id
+     * @return json
+     */
     public function patch(Request $request, $id = NULL)
     {
         $event = Event::where('id', $id);
@@ -189,6 +218,13 @@ class EventsController extends Controller
 
         return response()->json(['message' => "Event id {$id} has been updated"]);
     }
+
+    /**
+     * DELETE AN EVENT
+     * @param $params;
+     *      id
+     * @return json
+     */
     public function delete($id)
     {
         $event = Event::where('id', $id);
