@@ -1,5 +1,8 @@
 # Laravel Live Coding Test
 
+
+
+
 ## Follow this steps
 
 #### Application Setup (DO THIS FIRST)
@@ -60,3 +63,12 @@
 
 - Push all the codes into the your remote repository
 - Make sure the repository is public
+
+## Running in localhost
+```bash
+    npm i
+    composer i
+    
+    php artisan serve
+    npm run watch
+```
