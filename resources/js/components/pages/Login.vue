@@ -96,7 +96,6 @@ export default {
             variant = "default",
             position = "b-toaster-top-right"
         ) {
-            console.log("TOAST")
             const h = this.$createElement;
             const id = `my-toast-${this.toastCount++}`;
             const $closeButton = h(

@@ -9,9 +9,11 @@
                     Loading External API Result...
                 </div>
 
-                <pre>
-                    {{ data }}
-                </pre>
+                <pre>{{ data }}</pre>
+
+                <h4 v-if="hasError">
+                    Error encountered while loading external API.
+                </h4>
             </b-col>
         </b-row>
 
@@ -24,6 +26,7 @@ export default {
         return {
             data: '',
             isLoading: true,
+            hasError: false
         }
     },
 
@@ -47,6 +50,8 @@ export default {
                     })
                     .catch(function (error) {
                         console.error(error);
+                        self.isLoading = false
+                        self.hasError = true
                     });
                 });
         },

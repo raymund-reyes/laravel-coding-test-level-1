@@ -96,7 +96,7 @@ export default {
 
             axios.get("/sanctum/csrf-cookie").then((response) => {
                 axios
-                    .get("/api/v1/events?paginate=1", {
+                    .get("/api/v1/events", {
                         headers: {
                             'accept': 'application/json'
                         }
@@ -119,7 +119,7 @@ export default {
             variant = "default",
             position = "b-toaster-top-right"
         ) {
-            console.log("TOAST")
+
             const h = this.$createElement;
             const id = `my-toast-${this.toastCount++}`;
             const $closeButton = h(

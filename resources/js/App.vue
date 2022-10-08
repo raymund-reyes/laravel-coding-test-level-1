@@ -40,8 +40,6 @@ export default {
                         if (response.data) {
                             location.reload()
 
-                        } else {
-                            console.log(response);
                         }
                     })
                     .catch(function (error) {

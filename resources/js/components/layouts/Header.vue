@@ -5,8 +5,8 @@
 
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav>
-                    <b-nav-item @click="$router.push('/events')">Events</b-nav-item>
-                    <b-nav-item @click="$router.push('external-api')">External API</b-nav-item>
+                    <b-nav-item @click="$route.path != '/events' ? $router.push('/events') : ''">Events</b-nav-item>
+                    <b-nav-item @click="$route.path != '/external-api' ? $router.push('/external-api') : ''">External API</b-nav-item>
                 </b-navbar-nav>
                 <b-navbar-nav class="ml-auto">
 

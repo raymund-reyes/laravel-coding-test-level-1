@@ -21,3 +21,4 @@ Vue.use(Router)
     components: {App},
     template: '<App />'
 });
+
