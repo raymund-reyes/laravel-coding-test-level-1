@@ -23,6 +23,7 @@ class UserController extends Controller
             $success = true;
             $message = "Welcome, " . auth()->user()->name;
             $data = auth()->user();
+            $data['token'] = auth()->user()->createToken('API TOKEN')->plainTextToken;
             $response = [
                 'message' => $message,
                 'data' => $data

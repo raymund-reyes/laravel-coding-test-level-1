@@ -72,3 +72,7 @@
     php artisan serve
     npm run watch
 ```
+After the 3-advance-topic Test, the APIs requires a Bearer Token to access. You can get the Bearer Token by logging in to.
+```bash
+    POST - /api/login
+```
